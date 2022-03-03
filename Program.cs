@@ -1,6 +1,7 @@
 using Agendamento.Data;
 using Agendamento.Data.Repositorios;
 using Agendamento.Data.Repositorios.Interfaces;
+using Agendamento.Models;
 using Agendamento.Services;
 using Agendamento.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
