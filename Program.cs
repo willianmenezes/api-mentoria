@@ -20,7 +20,9 @@ builder.Services.AddDbContext<AgendamentoContexto>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("AgendamentoDB")));
 
 builder.Services.AddScoped<IServicoSala, ServicoSala>();
+builder.Services.AddScoped<IServicoReserva, ServicoReserva>();
 builder.Services.AddScoped<ISalaRepositorio, SalaRepositorio>();
+builder.Services.AddScoped<IReservaRepositorio, ReservaRepositorio>();
 
 var app = builder.Build();
 

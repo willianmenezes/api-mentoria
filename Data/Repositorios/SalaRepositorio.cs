@@ -12,5 +12,4 @@ namespace Agendamento.Data.Repositorios
             return _dbSet.FirstOrDefault(x => x.Nome == nome);
         }
     }
-
 }

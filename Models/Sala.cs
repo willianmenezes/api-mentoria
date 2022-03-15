@@ -9,7 +9,10 @@
         public IReadOnlyCollection<Reserva> Reservas => _reservas;
         private List<Reserva> _reservas;
 
-        private Sala() { }
+        private Sala()
+        {
+            _reservas = new List<Reserva>();
+        }
 
         public Sala(string nome, int quantidadeDeLugares, int andar)
         {

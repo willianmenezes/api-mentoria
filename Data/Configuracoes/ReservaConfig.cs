@@ -30,9 +30,6 @@ namespace Agendamento.Data.Configuracoes
 
             builder.Property(x => x.SalaId)
                    .IsRequired();
-
-            builder.Property(x => x.UsuarioId)
-                   .IsRequired();
         }
     }
 }

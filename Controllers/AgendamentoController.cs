@@ -4,17 +4,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Agendamento.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/agendamento")]
     [ApiController]
-    public class SalasController : ControllerBase
+    public class AgendamentoController : ControllerBase
     {
         private readonly IServicoSala _servicoSala;
-        public SalasController(IServicoSala servicoSala)
+        private readonly IServicoReserva _servicoReserva;
+
+        public AgendamentoController(IServicoSala servicoSala, IServicoReserva servicoReserva)
         {
             _servicoSala = servicoSala;
+            _servicoReserva = servicoReserva;
         }
 
-        [HttpPost]
+        [HttpPost("salas")]
         public IActionResult Cadastrar([FromBody] SalaRequest salaRequest)
         {
             try
@@ -31,7 +34,7 @@ namespace Agendamento.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("salas")]
         public IActionResult Buscar()
         {
             try
@@ -44,7 +47,7 @@ namespace Agendamento.Controllers
             }
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("salas/{id}")]
         public IActionResult Atualizar([FromRoute] Guid id, [FromBody] AtualizarSalaRequest request)
         {
             try
@@ -61,13 +64,44 @@ namespace Agendamento.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("salas/{id}")]
         public IActionResult Remover([FromRoute] Guid id)
         {
             try
             {
                 _servicoSala.Remover(id);
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("salas/{id}/reservas")]
+        public IActionResult CadastrarReserva([FromRoute] Guid id, [FromBody] ReservaRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest("Entidade Invalida");
+
+                _servicoReserva.Adicionar(id, request);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("salas/{id}/reservas")]
+        public IActionResult BuscarReserva([FromRoute] Guid id)
+        {
+            try
+            {
+                return Ok(_servicoReserva.BuscarReservasPorSala(id));
             }
             catch (Exception ex)
             {

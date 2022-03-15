@@ -17,7 +17,4 @@ public class ReservaRequest
 
     [Required(ErrorMessage = "Horario final obrigatorio.")]
     public DateTime Fim { get; set; }
-
-    [Required(ErrorMessage = "Sala obrigatorio.")]
-    public Guid SalaId { get; set; }
 }
