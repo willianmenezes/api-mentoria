@@ -4,6 +4,7 @@ using Agendamento.Data.Repositorios.Interfaces;
 using Agendamento.Models;
 using Agendamento.Services;
 using Agendamento.Services.Interfaces;
+using Agendamento.Shared.Notificacoes;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,7 @@ builder.Services.AddScoped<IServicoSala, ServicoSala>();
 builder.Services.AddScoped<IServicoReserva, ServicoReserva>();
 builder.Services.AddScoped<ISalaRepositorio, SalaRepositorio>();
 builder.Services.AddScoped<IReservaRepositorio, ReservaRepositorio>();
+builder.Services.AddScoped<INotificador, Notificador>(); // explicar o motivo do ciclo
 
 var app = builder.Build();
 

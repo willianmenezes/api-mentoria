@@ -2,14 +2,15 @@
 using Agendamento.Models;
 using Agendamento.Services.Dtos.Request;
 using Agendamento.Services.Interfaces;
+using Agendamento.Shared.Notificacoes;
 
 namespace Agendamento.Services
 {
-    public class ServicoSala : IServicoSala
+    public class ServicoSala : BaseService, IServicoSala
     {
         private readonly ISalaRepositorio _salaRepositorio;
 
-        public ServicoSala(ISalaRepositorio salaRepositorio)
+        public ServicoSala(ISalaRepositorio salaRepositorio, INotificador notificador) : base(notificador)
         {
             _salaRepositorio = salaRepositorio;
         }
@@ -19,11 +20,14 @@ namespace Agendamento.Services
             var salaExistente = _salaRepositorio.BuscarPorNome(salaRequest.Nome);
 
             if (salaExistente != null)
-                throw new Exception("Ja existe uma sala cadastrada com esse nome");
+            {
+                NotificarErro("Ja existe uma sala cadastrada com esse nome");
+                return;
+            }
 
             var sala = new Sala(
-                salaRequest.Nome, 
-                salaRequest.QuantidadeDeLugares, 
+                salaRequest.Nome,
+                salaRequest.QuantidadeDeLugares,
                 salaRequest.Andar);
 
             _salaRepositorio.Adicionar(sala);
@@ -39,7 +43,10 @@ namespace Agendamento.Services
             var sala = _salaRepositorio.BuscarPorId(id);
 
             if (sala is null)
-                throw new Exception("Sala inexistente.");
+            {
+                NotificarErro("Sala inexistente.");
+                return;
+            }
 
             sala.AlterarNome(salaRequest.Nome);
             sala.AlterarQuantidadeDeLugares(salaRequest.QuantidadeDeLugares);
@@ -52,7 +59,10 @@ namespace Agendamento.Services
             var sala = _salaRepositorio.BuscarPorId(id);
 
             if (sala is null)
-                throw new Exception("Sala inexistente.");
+            {
+                NotificarErro("Sala inexistente.");
+                return;
+            }
 
             _salaRepositorio.Remover(sala);
         }

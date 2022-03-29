@@ -3,15 +3,19 @@ using Agendamento.Models;
 using Agendamento.Services.Dtos.Request;
 using Agendamento.Services.Dtos.Response;
 using Agendamento.Services.Interfaces;
+using Agendamento.Shared.Notificacoes;
 
 namespace Agendamento.Services
 {
-    public class ServicoReserva : IServicoReserva
+    public class ServicoReserva : BaseService, IServicoReserva
     {
         private readonly ISalaRepositorio _salaRepositorio;
         private readonly IReservaRepositorio _reservaRepositorio;
 
-        public ServicoReserva(ISalaRepositorio salaRepositorio, IReservaRepositorio reservaRepositorio)
+        public ServicoReserva(
+            ISalaRepositorio salaRepositorio,
+            IReservaRepositorio reservaRepositorio,
+            INotificador notificador) : base(notificador)
         {
             _salaRepositorio = salaRepositorio;
             _reservaRepositorio = reservaRepositorio;
@@ -22,7 +26,10 @@ namespace Agendamento.Services
             var sala = _salaRepositorio.BuscarPorId(salaId);
 
             if (sala is null)
-                throw new Exception("Sala nao encontrada.");
+            {
+                NotificarErro("Sala nao encontrada.");
+                return;
+            }
 
             var reserva = new Reserva(
                 request.Titulo,
@@ -38,9 +45,12 @@ namespace Agendamento.Services
         public IEnumerable<ReservaResponse> BuscarReservasPorSala(Guid salaId)
         {
             if (_salaRepositorio.BuscarPorId(salaId) is var sala && sala is null)
-                throw new Exception("Sala nao encontrada.");
+            {
+                NotificarErro("Sala nao encontrada.");
+                return null;
+            }
 
-            if (_reservaRepositorio.BuscarReservasPorSala(salaId) 
+            if (_reservaRepositorio.BuscarReservasPorSala(salaId)
                 is var reservas && reservas is null)
                 return null;
 

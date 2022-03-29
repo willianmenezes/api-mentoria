@@ -1,17 +1,18 @@
 ﻿using Agendamento.Services.Dtos.Request;
 using Agendamento.Services.Interfaces;
+using Agendamento.Shared.Notificacoes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Agendamento.Controllers
 {
     [Route("api/agendamento")]
-    [ApiController]
-    public class AgendamentoController : ControllerBase
+    public class AgendamentoController : MainController
     {
         private readonly IServicoSala _servicoSala;
         private readonly IServicoReserva _servicoReserva;
 
-        public AgendamentoController(IServicoSala servicoSala, IServicoReserva servicoReserva)
+        public AgendamentoController(IServicoSala servicoSala, 
+            IServicoReserva servicoReserva, INotificador notificador) : base(notificador)
         {
             _servicoSala = servicoSala;
             _servicoReserva = servicoReserva;
@@ -23,14 +24,15 @@ namespace Agendamento.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return BadRequest("Entidade Invalida");
+                    return CustomResponse(ModelState);
 
                 _servicoSala.Adicionar(salaRequest);
-                return Ok();
+                return CustomResponse();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                NotificarErro(ex.Message);
+                return CustomResponse();
             }
         }
 
@@ -39,11 +41,12 @@ namespace Agendamento.Controllers
         {
             try
             {
-                return Ok(_servicoSala.Buscar());
+                return CustomResponse(_servicoSala.Buscar());
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                NotificarErro(ex.Message);
+                return CustomResponse();
             }
         }
 
@@ -53,14 +56,15 @@ namespace Agendamento.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return BadRequest("Entidade Invalida");
+                    return CustomResponse(ModelState);
 
                 _servicoSala.Editar(id, request);
-                return Ok();
+                return CustomResponse();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                NotificarErro(ex.Message);
+                return CustomResponse();
             }
         }
 
@@ -70,11 +74,12 @@ namespace Agendamento.Controllers
             try
             {
                 _servicoSala.Remover(id);
-                return Ok();
+                return CustomResponse();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                NotificarErro(ex.Message);
+                return CustomResponse();
             }
         }
 
@@ -84,15 +89,16 @@ namespace Agendamento.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return BadRequest("Entidade Invalida");
+                    return CustomResponse(ModelState);
 
                 _servicoReserva.Adicionar(id, request);
 
-                return Ok();
+                return CustomResponse();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                NotificarErro(ex.Message);
+                return CustomResponse();
             }
         }
 
@@ -101,11 +107,12 @@ namespace Agendamento.Controllers
         {
             try
             {
-                return Ok(_servicoReserva.BuscarReservasPorSala(id));
+                return CustomResponse(_servicoReserva.BuscarReservasPorSala(id));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                NotificarErro(ex.Message);
+                return CustomResponse();
             }
         }
     }
